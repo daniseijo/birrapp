@@ -1,8 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { TrendingDown, TrendingUp, Minus } from 'lucide-react'
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
+import { useSyncExternalStore } from 'react'
 import { getAllUsersDataByYear } from '@/lib/mock-generator'
-import { useEffect, useState } from 'react'
-import { YearFilter } from '@/lib/types'
+import type { YearFilter } from '@/lib/types'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+
+// Hook to detect client-side rendering without triggering lint warnings
+const emptySubscribe = () => () => {}
+const useIsClient = () => useSyncExternalStore(emptySubscribe, () => true, () => false)
 
 interface YearComparisonCardProps {
   userId: number
@@ -10,11 +14,7 @@ interface YearComparisonCardProps {
 }
 
 export const YearComparisonCard: React.FC<YearComparisonCardProps> = ({ userId, yearFilter }) => {
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  const isClient = useIsClient()
 
   // Get the current year dynamically
   const currentYear = new Date().getFullYear()
@@ -55,26 +55,23 @@ export const YearComparisonCard: React.FC<YearComparisonCardProps> = ({ userId, 
   const ytdDifference = ytdCurrentYear - ytdLastYear
   const ytdPercentage = ytdLastYear > 0 ? ((ytdDifference / ytdLastYear) * 100).toFixed(1) : '0'
 
-  const getIcon = (diff: number) => {
-    if (diff > 0) return TrendingUp
-    if (diff < 0) return TrendingDown
-    return Minus
-  }
-
   const getColor = (diff: number) => {
-    if (diff > 0) return 'text-amber-600'
+    if (diff > 0) return 'text-primary'
     if (diff < 0) return 'text-blue-600'
-    return 'text-gray-600'
+    return 'text-muted-foreground'
   }
 
   const getBgColor = (diff: number) => {
-    if (diff > 0) return 'bg-amber-50 border-amber-200'
+    if (diff > 0) return 'bg-primary/10 border-primary/20'
     if (diff < 0) return 'bg-blue-50 border-blue-200'
-    return 'bg-gray-50 border-gray-200'
+    return 'bg-muted/50 border-border'
   }
 
-  const Icon = getIcon(difference)
-  const YtdIcon = getIcon(ytdDifference)
+  const renderIcon = (diff: number, className: string) => {
+    if (diff > 0) return <TrendingUp className={className} />
+    if (diff < 0) return <TrendingDown className={className} />
+    return <Minus className={className} />
+  }
 
   // Show loading state until client-side hydration is complete
   if (!isClient) {
@@ -108,7 +105,7 @@ export const YearComparisonCard: React.FC<YearComparisonCardProps> = ({ userId, 
               </div>
             </div>
             <div className={`flex flex-col items-center ${getColor(difference)}`}>
-              <Icon className="h-8 w-8" />
+              {renderIcon(difference, 'h-8 w-8')}
               <span className="text-lg font-semibold mt-1">
                 {difference > 0 ? '+' : ''}
                 {difference}
@@ -128,7 +125,7 @@ export const YearComparisonCard: React.FC<YearComparisonCardProps> = ({ userId, 
               </div>
             </div>
             <div className={`flex items-center gap-2 ${getColor(ytdDifference)}`}>
-              <YtdIcon className="h-5 w-5" />
+              {renderIcon(ytdDifference, 'h-5 w-5')}
               <div className="text-right">
                 <div className="font-semibold">
                   {ytdDifference > 0 ? '+' : ''}
@@ -147,7 +144,7 @@ export const YearComparisonCard: React.FC<YearComparisonCardProps> = ({ userId, 
         <div className="grid grid-cols-3 gap-3 pt-3 border-t">
           <div className="text-center">
             <div className="text-xs text-muted-foreground mb-1">Días ↑</div>
-            <div className="text-lg font-semibold text-amber-600">
+            <div className="text-lg font-semibold text-primary">
               {
                 currentYearData.filter((entry, index) => {
                   const prevEntry = previousYearData[index]
@@ -158,7 +155,7 @@ export const YearComparisonCard: React.FC<YearComparisonCardProps> = ({ userId, 
           </div>
           <div className="text-center">
             <div className="text-xs text-muted-foreground mb-1">Días =</div>
-            <div className="text-lg font-semibold text-gray-600">
+            <div className="text-lg font-semibold text-muted-foreground">
               {
                 currentYearData.filter((entry, index) => {
                   const prevEntry = previousYearData[index]

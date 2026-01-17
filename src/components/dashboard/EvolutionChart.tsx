@@ -5,6 +5,7 @@ import { aggregateData, calculateAverage, convertToChartData, Granularity } from
 import { USERS } from '@/lib/data'
 import { getAllUsersDataByYear } from '@/lib/mock-generator'
 import { YearFilter } from '@/lib/types'
+import { Button } from '../ui/button'
 
 interface EvolutionChartProps {
   currentUserId: number
@@ -50,48 +51,45 @@ export const EvolutionChart: React.FC<EvolutionChartProps> = ({ currentUserId, y
           {/* Granularity selector */}
           <div className="flex gap-2">
             {granularityOptions.map((option) => (
-              <button
+              <Button
                 key={option.value}
+                variant={granularity === option.value ? 'default' : 'ghost'}
+                size="sm"
                 onClick={() => setGranularity(option.value)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  granularity === option.value
-                    ? 'bg-amber-500 text-white'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }`}
               >
                 {option.label}
-              </button>
+              </Button>
             ))}
           </div>
 
           {/* Line toggles */}
           <div className="flex flex-wrap gap-2">
             {USERS.map((user) => (
-              <button
+              <Button
                 key={user.id}
+                variant="outline"
+                size="sm"
                 onClick={() => toggleLine(`user_${user.id}`)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all ${
-                  visibleLines.has(`user_${user.id}`)
-                    ? 'bg-background border-2 shadow-sm'
-                    : 'bg-muted text-muted-foreground opacity-50'
+                className={`gap-2 ${
+                  visibleLines.has(`user_${user.id}`) ? 'shadow-sm' : 'opacity-50'
                 }`}
                 style={visibleLines.has(`user_${user.id}`) ? { borderColor: user.color } : {}}
               >
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: user.color }} />
                 <span className="font-medium">{user.name}</span>
-              </button>
+              </Button>
             ))}
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => toggleLine('average')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all ${
-                visibleLines.has('average')
-                  ? 'bg-background border-2 border-gray-400 shadow-sm'
-                  : 'bg-muted text-muted-foreground opacity-50'
+              className={`gap-2 ${
+                visibleLines.has('average') ? 'border-gray-400 shadow-sm' : 'opacity-50'
               }`}
             >
               <div className="w-3 h-3 rounded-full bg-gray-400" />
               <span className="font-medium">Media</span>
-            </button>
+            </Button>
           </div>
         </div>
       </CardHeader>

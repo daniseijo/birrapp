@@ -14,11 +14,11 @@ export const StatCard: React.FC<StatCardProps> = ({ title, value, subtitle, icon
   <Card className="hover:shadow-md transition-shadow">
     <CardContent className="p-5">
       <div className="flex items-start justify-between mb-3">
-        <div className="p-2 bg-amber-50 rounded-xl">
-          <Icon className="w-5 h-5 text-amber-600" />
+        <div className="p-2 bg-primary/10 rounded-xl">
+          <Icon className="w-5 h-5 text-primary" />
         </div>
         {highlight && (
-          <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">Top {position}</span>
+          <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">Top {position}</span>
         )}
       </div>
       <h3 className="text-xs font-medium text-muted-foreground mb-1">{title}</h3>

@@ -1,5 +1,6 @@
 import { User } from '@/lib/types'
 import { PanelLeft } from 'lucide-react'
+import { Button } from '../ui/button'
 
 interface HeaderProps {
   currentUser: User
@@ -11,13 +12,9 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenSidebar, side
   <header className="bg-background border-b sticky top-0 z-40">
     <div className="px-4 lg:px-6 py-4 flex items-center justify-between">
       {!sidebarOpen && (
-        <button
-          onClick={onOpenSidebar}
-          className="p-2 hover:bg-muted rounded-lg transition-colors hidden lg:block"
-          title="Show sidebar"
-        >
-          <PanelLeft className="w-6 h-6" />
-        </button>
+        <Button variant="ghost" size="icon" onClick={onOpenSidebar} className="hidden lg:flex" title="Show sidebar">
+          <PanelLeft className="w-5 h-5" />
+        </Button>
       )}
       <div className={`flex items-center gap-3 ${sidebarOpen ? 'ml-auto' : 'lg:ml-auto'}`}>
         <div className="text-right hidden sm:block">

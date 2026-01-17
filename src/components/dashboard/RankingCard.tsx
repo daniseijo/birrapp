@@ -15,7 +15,7 @@ export const RankingCard: React.FC<RankingCardProps> = ({ users, currentUserId, 
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <Users className="w-5 h-5 text-amber-600" />
+          <Users className="w-5 h-5 text-primary" />
           Ranking 2025
         </CardTitle>
       </CardHeader>
@@ -24,12 +24,12 @@ export const RankingCard: React.FC<RankingCardProps> = ({ users, currentUserId, 
           <div
             key={user.id}
             className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-              user.id === currentUserId ? 'bg-amber-50 border-2 border-amber-200' : 'bg-muted'
+              user.id === currentUserId ? 'bg-primary/10 border-2 border-primary/20' : 'bg-muted'
             }`}
           >
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm ${
-                idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-gray-400' : idx === 2 ? 'bg-amber-700' : 'bg-gray-300'
+                idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-gray-400' : idx === 2 ? 'bg-orange-700' : 'bg-gray-300'
               }`}
             >
               {user.position}

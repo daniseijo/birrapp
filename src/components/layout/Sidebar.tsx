@@ -1,6 +1,9 @@
 import { NAV_ITEMS } from '@/lib/data'
 import { SectionId, User } from '@/lib/types'
-import { Beer, PanelLeft, Pin, PinOff } from 'lucide-react'
+import { Beer, PanelLeft } from 'lucide-react'
+import { Button } from '../ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Label } from '../ui/label'
 
 interface SidebarProps {
   isOpen: boolean
@@ -30,48 +33,51 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-6">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Beer className="w-7 h-7 text-amber-500" />
-            <span className="bg-linear-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">Birrapp</span>
+            <Beer className="w-7 h-7 text-primary" />
+            <span className="bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">Birrapp</span>
           </h1>
-          <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Hide sidebar">
-            <PanelLeft className="w-5 h-5 text-muted-foreground" />
-          </button>
+          <Button variant="ghost" size="icon" onClick={onClose} title="Hide sidebar">
+            <PanelLeft className="w-5 h-5" />
+          </Button>
         </div>
 
-        <div className="mb-6">
-          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 block">
-            Usuario
-          </label>
-          <select
-            value={currentUser.id}
-            onChange={(e) => {
-              const user = users.find((u) => u.id === parseInt(e.target.value))
+        <div className="mb-6 space-y-2">
+          <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Usuario</Label>
+          <Select
+            value={currentUser.id.toString()}
+            onValueChange={(value) => {
+              const user = users.find((u) => u.id === parseInt(value))
               if (user) onUserChange(user)
             }}
-            className="w-full p-3 bg-muted rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
           >
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Selecciona usuario" />
+            </SelectTrigger>
+            <SelectContent>
+              {users.map((user) => (
+                <SelectItem key={user.id} value={user.id.toString()}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <nav className="space-y-2">
           {NAV_ITEMS.map((item) => (
-            <button
+            <Button
               key={item.id}
+              variant="ghost"
               onClick={() => onSectionChange(item.id as SectionId)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+              className={`w-full justify-start gap-3 px-4 py-3 h-auto rounded-xl ${
                 activeSection === item.id
-                  ? 'bg-amber-50 text-amber-700 font-medium'
-                  : 'text-muted-foreground hover:bg-muted'
+                  ? 'bg-primary/10 text-primary font-medium hover:bg-primary/15'
+                  : 'text-muted-foreground'
               }`}
             >
               <item.icon className="w-5 h-5" />
               {item.label}
-            </button>
+            </Button>
           ))}
         </nav>
       </div>
