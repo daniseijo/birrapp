@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Birrapp
+
+A beer consumption tracking dashboard for friends. Track your daily beer intake, compare stats with your group, and visualize drinking patterns over time.
+
+## Features
+
+- **Personal Dashboard**: View your beer consumption stats including total beers, daily average, and active days
+- **Evolution Charts**: Visualize consumption over time with daily, weekly, and monthly views
+- **Range Distribution**: See how your drinking days are distributed across different consumption levels
+- **Streak Tracking**: Track your longest drinking streaks and dry spells
+- **Group Rankings**: Compare your stats with friends on a leaderboard
+- **Year Comparison**: Compare your current year's consumption with previous years
+- **Multi-user Support**: Switch between users to view different profiles
+
+## Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) with App Router
+- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Charts**: [Recharts](https://recharts.org/)
+- **Language**: TypeScript
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18+
+- A Supabase project
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+SUPABASE_SECRET_KEY=your_supabase_secret_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Database Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run the migrations in order on your Supabase project:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. `supabase/migrations/001_initial_schema.sql` - Creates tables for profiles and beer entries
+2. `supabase/migrations/002_rls_policies.sql` - Sets up Row Level Security policies
+3. `supabase/migrations/003_views.sql` - Creates views for statistics and analytics
 
-## Learn More
+### Installation
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Install dependencies
+npm install
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Run development server
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/
+│   ├── dashboard/      # Main dashboard page
+│   ├── login/          # Authentication page
+│   └── auth/           # Auth callback handlers
+├── components/
+│   ├── dashboard/      # Dashboard widgets and cards
+│   ├── layout/         # Header, Sidebar, Navigation
+│   ├── sections/       # Page sections
+│   └── ui/             # Reusable UI components
+└── lib/
+    ├── supabase/       # Supabase client configuration
+    ├── data.ts         # Static data and constants
+    └── types.ts        # TypeScript type definitions
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Database Schema
+
+### Tables
+
+- **profiles**: User information (id, name, color)
+- **beer_entries**: Daily beer consumption records (user_id, date, beers)
+
+### Views
+
+- **user_yearly_stats**: Aggregated yearly statistics per user
+- **yearly_ranking**: Leaderboard rankings by year
+- **user_weekday_stats**: Consumption patterns by day of week
+- **user_monthly_stats**: Monthly consumption breakdown
+- **user_range_distribution**: Distribution of consumption levels
+- **group_yearly_stats**: Group-wide statistics
+
+## License
+
+MIT
