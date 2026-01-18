@@ -1,6 +1,11 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { NAV_ITEMS } from '@/lib/data'
-import { SectionId, User } from '@/lib/types'
-import { Beer, PanelLeft } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { Profile } from '@/lib/supabase/types'
+import { SectionId } from '@/lib/types'
+import { Beer, LogOut, PanelLeft } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Label } from '../ui/label'
@@ -8,9 +13,10 @@ import { Label } from '../ui/label'
 interface SidebarProps {
   isOpen: boolean
   onClose: () => void
-  currentUser: User
-  users: User[]
-  onUserChange: (user: User) => void
+  currentUserId: string | null
+  loggedInUserId: string | null
+  users: Profile[]
+  onUserChange: (userId: string) => void
   activeSection: SectionId
   onSectionChange: (section: SectionId) => void
 }
@@ -18,12 +24,24 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   onClose,
-  currentUser,
+  currentUserId,
+  loggedInUserId,
   users,
   onUserChange,
   activeSection,
   onSectionChange,
 }) => {
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
+
+  const loggedInUser = users.find((u) => u.id === loggedInUserId)
+
   return (
     <div
       className={`fixed left-0 top-0 h-full bg-background border-r transition-all duration-300 z-50 hidden lg:block ${
@@ -44,18 +62,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="mb-6 space-y-2">
           <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Usuario</Label>
           <Select
-            value={currentUser.id.toString()}
-            onValueChange={(value) => {
-              const user = users.find((u) => u.id === parseInt(value))
-              if (user) onUserChange(user)
-            }}
+            value={currentUserId || ''}
+            onValueChange={(value) => onUserChange(value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecciona usuario" />
             </SelectTrigger>
             <SelectContent>
               {users.map((user) => (
-                <SelectItem key={user.id} value={user.id.toString()}>
+                <SelectItem key={user.id} value={user.id}>
                   {user.name}
                 </SelectItem>
               ))}
@@ -80,6 +95,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </Button>
           ))}
         </nav>
+
+        {loggedInUser && (
+          <div className="absolute bottom-0 left-0 right-0 p-6 border-t bg-background">
+            <div className="flex items-center gap-3 mb-3">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                style={{ backgroundColor: loggedInUser.color }}
+              >
+                {loggedInUser.name[0]}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{loggedInUser.name}</p>
+                <p className="text-xs text-muted-foreground">Conectado</p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="w-full gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Cerrar sesión
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )
